@@ -8,6 +8,11 @@
 
 #define max(a,b) ((a > b) ? a : b)
 #define min(a,b) ((a < b) ? a : b)
+void swapInt(int *a, int *b) {
+  int t = *a;
+  *a = *b;
+  *b = t;
+}
 
 void fill(uint32_t *pixels, size_t width, size_t height, uint32_t color) {
   for (size_t i = 0; i < height * width; ++i) {
@@ -47,12 +52,8 @@ void fillCircle(uint32_t *pixels, size_t width, size_t height, uint32_t color, i
 
 void drawLine(uint32_t *pixels, size_t width, size_t height, uint32_t color, int x0, int y0, int x1, int y1, size_t thic) {
   if (y0 > y1) {
-    int tmp = y0;
-    y0 = y1;
-    y1 = tmp;
-    tmp = x0;
-    x0 = x1;
-    x1 = tmp;
+    swapInt(&y0, &y1);
+    swapInt(&x0, &x1);
   }
   size_t yStart = max(0, y0);
   size_t yEnd = min(y1, (int) height);
