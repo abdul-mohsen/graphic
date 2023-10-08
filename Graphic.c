@@ -1,11 +1,12 @@
 #include "Graphic.h"
+#include <math.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define max(a,b) (((a) > (b)) ? (a) : (b))
-#define min(a,b) (((a) < (b)) ? (a) : (b))
+#define max(a,b) ((a > b) ? a : b)
+#define min(a,b) ((a < b) ? a : b)
 
 void fill(uint32_t *pixels, size_t width, size_t height, uint32_t color) {
   for (size_t i = 0; i < height * width; ++i) {
@@ -18,8 +19,25 @@ void fillRect(uint32_t *pixels, size_t width, size_t height, uint32_t color, int
   size_t yEnd = min(y + h, height);
   size_t xStart = max(0, x);
   size_t xEnd = min(x + w, width);
-  printf(" y: %zu %zu  x: %zu %zu", yStart, yEnd, xStart, xEnd);
   for (size_t sy = yStart; sy < yEnd; sy++) {
+    for (size_t sx = xStart; sx < xEnd; sx++) {
+      pixels[sy * width + sx] = color;
+    }
+  }
+}
+
+void fillCircle(uint32_t *pixels, size_t width, size_t height, uint32_t color, int cx, int cy, size_t r) {
+  int y = cy - r;
+  int x = cx - r;
+  size_t yStart = max(0, y);
+  size_t yEnd = min(cy + r, height);
+  size_t r2 = r * r;
+  for (size_t sy = yStart; sy < yEnd; sy++) {
+    size_t y2 = (sy - cy) * (sy - cy);
+    double_t x2 = r2 - y2;
+    int xr = (int) sqrt(x2);
+    size_t xStart = max(0, cx - xr);
+    size_t xEnd = min(cx + xr, width);
     for (size_t sx = xStart; sx < xEnd; sx++) {
       pixels[sy * width + sx] = color;
     }
