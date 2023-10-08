@@ -1,4 +1,5 @@
 #include "Graphic.h"
+#include <assert.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -28,7 +29,6 @@ void fillRect(uint32_t *pixels, size_t width, size_t height, uint32_t color, int
 
 void fillCircle(uint32_t *pixels, size_t width, size_t height, uint32_t color, int cx, int cy, size_t r) {
   int y = cy - r;
-  int x = cx - r;
   size_t yStart = max(0, y);
   size_t yEnd = min(cy + r, height);
   size_t r2 = r * r;
@@ -37,7 +37,41 @@ void fillCircle(uint32_t *pixels, size_t width, size_t height, uint32_t color, i
     double_t x2 = r2 - y2;
     int xr = (int) sqrt(x2);
     size_t xStart = max(0, cx - xr);
-    size_t xEnd = min(cx + xr, width);
+    assert(cx + xr > 0);
+    size_t xEnd = min((size_t) cx + xr, width);
+    for (size_t sx = xStart; sx < xEnd; sx++) {
+      pixels[sy * width + sx] = color;
+    }
+  }
+}
+
+void drawLine(uint32_t *pixels, size_t width, size_t height, uint32_t color, int x0, int y0, int x1, int y1, size_t thic) {
+  if (y0 > y1) {
+    int tmp = y0;
+    y0 = y1;
+    y1 = tmp;
+    tmp = x0;
+    x0 = x1;
+    x1 = tmp;
+  }
+  size_t yStart = max(0, y0);
+  size_t yEnd = min(y1, (int) height);
+  int dy = y0 - y1;
+  int dx = x0 - x1;
+  int line = 0;
+  double b = 0;
+  if (dy == 0) {
+    yStart -= thic;
+    yEnd += thic;
+    line = abs(dx);
+  } else {
+    b = (double) dx/dy ;
+  }
+  printf("lines %zu %zu %f\n", yStart, yEnd, b);
+  for (size_t sy = yStart; sy < yEnd; sy++) {
+    int x = sy * b + x0;
+    size_t xStart = max(0, (int) (x - thic));
+    size_t xEnd = min(x + thic + line, width);
     for (size_t sx = xStart; sx < xEnd; sx++) {
       pixels[sy * width + sx] = color;
     }
