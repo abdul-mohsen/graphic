@@ -13,6 +13,11 @@ void swapInt(int *a, int *b) {
   *a = *b;
   *b = t;
 }
+void swapLong(size_t *a, size_t *b) {
+  int t = *a;
+  *a = *b;
+  *b = t;
+}
 
 void fill(uint32_t *pixels, size_t width, size_t height, uint32_t color) {
   for (size_t i = 0; i < height * width; ++i) {
@@ -56,7 +61,7 @@ void drawLine(uint32_t *pixels, size_t width, size_t height, uint32_t color, int
     swapInt(&x0, &x1);
   }
   size_t yStart = max(0, y0);
-  size_t yEnd = min(y1, (int) height);
+  size_t yEnd = min(max(y0 + 1, y1), (int) height);
   int dy = y0 - y1;
   int dx = x0 - x1;
   int line = 0;
@@ -68,12 +73,52 @@ void drawLine(uint32_t *pixels, size_t width, size_t height, uint32_t color, int
   } else {
     b = (double) dx/dy ;
   }
-  printf("lines %zu %zu %f\n", yStart, yEnd, b);
   for (size_t sy = yStart; sy < yEnd; sy++) {
     int x = sy * b + x0;
-    size_t xStart = max(0, (int) (x - thic));
-    size_t xEnd = min(x + thic + line, width);
-    for (size_t sx = xStart; sx < xEnd; sx++) {
+    int xStart = max(0, (int) (x - thic));
+    int xEnd = min(max(x, xStart + 1) + thic + line, width);
+    for (int sx = xStart; sx < xEnd; sx++) {
+      pixels[sy * width + sx] = color;
+    }
+  }
+}
+
+void drawTriangle(uint32_t *pixels, size_t width, size_t height, uint32_t color, int x0, int y0, int x1, int y1, int x2, int y2) {
+  if (y0 > y1) {
+    swapInt(&y0, &y1);
+    swapInt(&x0, &x1);
+  }
+  if (y1 > y2) {
+    swapInt(&y2, &y1);
+    swapInt(&x2, &x1);
+  }
+  if (y0 > y1) {
+    swapInt(&y0, &y1);
+    swapInt(&x0, &x1);
+  }
+  size_t yStart = max(0, y0);
+  size_t yEnd = min((size_t)max(0, y2), height);
+  double m0 = (double) (x0 - x1) / (y0 - y1);
+  double m1 = (double) (x0 - x2) / (y0 - y2);
+  double m2 = (double) (x1 - x2) / (y1 - y2);
+  for (size_t sy = yStart; sy < yEnd; sy++) {
+    int si = (int) sy;
+    size_t z = (si > y0) + (si > y1) + (si > y2);
+    size_t xStart = max((sy - y0) * m1 + x0, 0) ;
+    int tmp;
+    if (z > 1) {
+      tmp = (sy - y1) * m2 + x1;
+    } else {
+      tmp = (sy - y0) * m0 + x0;
+    }
+    size_t xEnd = (size_t)max(0, tmp);
+
+    if (xStart>xEnd) {
+      swapLong(&xStart, &xEnd);
+    }
+    xStart = max(0, xStart);
+    xEnd = min((size_t) max(0, xEnd), width);
+    for (size_t sx = xStart; sx <= xEnd; sx++) {
       pixels[sy * width + sx] = color;
     }
   }

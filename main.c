@@ -13,11 +13,12 @@ int main()
   fill(pixels, WIDTH, HEIGHT, 0xFF202020);
   fillRect(pixels, WIDTH, HEIGHT, 0xFFFF00FF, 200, 200, 100, 100);
   fillCircle(pixels, WIDTH, HEIGHT, 0xFF335400, WIDTH, HEIGHT, WIDTH);
-  drawLine(pixels, WIDTH, HEIGHT, 0xFFFFFFFF, 0, 0, WIDTH/16, HEIGHT, 1); 
-  drawLine(pixels, WIDTH, HEIGHT, 0xFFFFFFFF, WIDTH/2, 0, WIDTH/2, HEIGHT, 1); 
-  drawLine(pixels, WIDTH, HEIGHT, 0xFFFFFFFF, 0, HEIGHT/2, WIDTH, HEIGHT/2, 1); 
-
-  drawLine(pixels, WIDTH, HEIGHT, 0xFFFFFFFF, 0, HEIGHT, WIDTH, 0, 1); 
+  drawLine(pixels, WIDTH, HEIGHT, 0xFFFFFFFF, 0, 0, WIDTH/16, HEIGHT, 5); 
+  drawLine(pixels, WIDTH, HEIGHT, 0xFFFFFFFF, WIDTH/2, 0, WIDTH/2, HEIGHT, 0); 
+  drawLine(pixels, WIDTH, HEIGHT, 0xFFFFFFFF, 0, HEIGHT/2, WIDTH, HEIGHT/2, 0); 
+  drawLine(pixels, WIDTH, HEIGHT, 0xFFFFFFFF, 0, HEIGHT, WIDTH, 0, 0); 
+  drawTriangle(pixels, WIDTH, HEIGHT, 0xFF004FAA, WIDTH, 0, 0, HEIGHT/2, WIDTH/2, HEIGHT/2);
+  drawTriangle(pixels, WIDTH, HEIGHT, 0xFF004FAA, WIDTH, HEIGHT, 0, HEIGHT, WIDTH/2, HEIGHT/2);
 
   int result = saveImage(pixels, WIDTH, HEIGHT, filePath);
   if (result == EXIT_FAILURE) {
