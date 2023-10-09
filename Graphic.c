@@ -18,6 +18,9 @@ void swapLong(size_t *a, size_t *b) {
   *a = *b;
   *b = t;
 }
+int findXAt(int x0, int y0, int x1, int y1, int y) {
+  return (y - y0) * (x0 - x1) / (y0 - y1) + x0;
+}
 
 void fill(uint32_t *pixels, size_t width, size_t height, uint32_t color) {
   for (size_t i = 0; i < height * width; ++i) {
@@ -98,18 +101,15 @@ void drawTriangle(uint32_t *pixels, size_t width, size_t height, uint32_t color,
   }
   size_t yStart = max(0, y0);
   size_t yEnd = min((size_t)max(0, y2), height);
-  double m0 = (double) (x0 - x1) / (y0 - y1);
-  double m1 = (double) (x0 - x2) / (y0 - y2);
-  double m2 = (double) (x1 - x2) / (y1 - y2);
   for (size_t sy = yStart; sy < yEnd; sy++) {
     int si = (int) sy;
     size_t z = (si > y0) + (si > y1) + (si > y2);
-    size_t xStart = max((sy - y0) * m1 + x0, 0) ;
+    size_t xStart = max(findXAt(x0, y0, x2, y2, sy), 0) ;
     int tmp;
     if (z > 1) {
-      tmp = (sy - y1) * m2 + x1;
+      tmp = findXAt(x1, y1, x2, y2, sy);
     } else {
-      tmp = (sy - y0) * m0 + x0;
+      tmp = findXAt(x0, y0, x1, y1, sy);
     }
     size_t xEnd = (size_t)max(0, tmp);
 
@@ -123,6 +123,7 @@ void drawTriangle(uint32_t *pixels, size_t width, size_t height, uint32_t color,
     }
   }
 }
+
 
 int saveImage(uint32_t *pixels, size_t width, size_t height, const char *filePath) {
   FILE *f = fopen(filePath, "wb");
