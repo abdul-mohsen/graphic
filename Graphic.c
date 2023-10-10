@@ -103,7 +103,7 @@ void drawTriangle(uint32_t *pixels, size_t width, size_t height, uint32_t color,
   size_t yEnd = min((size_t)max(0, y2), height);
   for (size_t sy = yStart; sy < yEnd; sy++) {
     int si = (int) sy;
-    size_t z = (si > y0) + (si > y1) + (si > y2);
+    size_t z = (si >= y0) + (si >= y1) + (si >= y2);
     size_t xStart = max(findXAt(x0, y0, x2, y2, sy), 0) ;
     int tmp;
     if (z > 1) {
